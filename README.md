@@ -15,5 +15,5 @@ A Fish Shell plugin that automatically activates a Python virtual environment (v
 ### With [Fisher](https://github.com/jorgebucaran/fisher)
 
 ```fish
-fisher install your-username/autopy.fish
+fisher install SpaceShaman/autopy.fish
 
