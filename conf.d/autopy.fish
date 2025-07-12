@@ -1,27 +1,12 @@
 
 function autopy --on-variable PWD
-  if is_git_repo
-    set project_dir (realpath (command git rev-parse --show-toplevel))
-  else
-    set project_dir (pwd)
-  end
+  set project_dir (get_project_dir)
 
   if is_venv_active && is_old_venv_active $project_dir
     deactivate
   end
 
-  if is_poetry_project $project_dir
-    set venv_dir (command poetry show -v 2> /dev/null | grep 'Using virtualenv:' | cut -d ' ' -f 3)
-  else
-    set -l venv_dir_names env .env venv .venv
-    set venv_dir ""
-    for name in $venv_dir_names
-      if test -e "$project_dir/$name/bin/activate.fish"
-        set venv_dir "$project_dir/$name"
-          break
-        end
-    end
-  end
+  set venv_dir (get_venv_dir $project_dir)
 
   if test -z "$venv_dir"
     return
@@ -39,6 +24,30 @@ function autopy --on-variable PWD
     source "$venv_dir/bin/activate.fish"
     set -gx OLD_PROJECT_DIR $project_dir
   end
+end
+
+function get_project_dir
+  if is_git_repo
+    command git rev-parse --show-toplevel
+  else
+    pwd
+  end
+end
+
+function get_venv_dir -a project_dir
+  if is_poetry_project $project_dir
+    set venv_dir (command poetry show -v 2> /dev/null | grep 'Using virtualenv:' | cut -d ' ' -f 3)
+  else
+    set -l venv_dir_names env .env venv .venv
+    set venv_dir ""
+    for name in $venv_dir_names
+      if test -e "$project_dir/$name/bin/activate.fish"
+        set venv_dir "$project_dir/$name"
+        break
+      end
+    end
+  end
+  echo $venv_dir
 end
 
 function is_git_repo
