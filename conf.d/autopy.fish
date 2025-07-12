@@ -12,14 +12,13 @@ function autopy --on-variable PWD
     return
   end
 
-  if is_venv_active && is_outside_venv $venv_dir
-    deactivate
-  end
-
   if is_venv_active
+    if is_outside_venv $venv_dir
+      deactivate
+    end
     return
   end
-  
+
   if test -n "$venv_dir"
     source "$venv_dir/bin/activate.fish"
     set -gx OLD_PROJECT_DIR $project_dir
