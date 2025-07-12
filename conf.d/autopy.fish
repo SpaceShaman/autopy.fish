@@ -1,5 +1,5 @@
 
-function activate_venv --on-variable PWD
+function autopy --on-variable PWD
   if is_git_repo
     set project_dir (realpath (command git rev-parse --show-toplevel))
   else
