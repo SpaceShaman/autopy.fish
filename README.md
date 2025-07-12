@@ -4,7 +4,7 @@ A Fish Shell plugin that automatically activates a Python virtual environment (v
 
 ## Features
 
-- 🔁 Auto-activation of `venv` or Poetry environments
+- 🔁 Auto-activation of [venv](https://docs.python.org/3/library/venv.html) or [Poetry](https://python-poetry.org/) environments
 - 🔻 Automatic deactivation of previously active environments
 - 🐟 Lightweight and runs on every directory change
 - 🧠 Detects `.venv` or `pyproject.toml` in project root
@@ -16,4 +16,9 @@ A Fish Shell plugin that automatically activates a Python virtual environment (v
 
 ```fish
 fisher install SpaceShaman/autopy.fish
+```
+
+### Manually
+
+Copy `autopy.fish` to your `~/.config/fish/conf.d/` directory.
 
