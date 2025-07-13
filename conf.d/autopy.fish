@@ -1,9 +1,13 @@
 
 function autopy --on-variable PWD
+  if is_venv_active && is_child_dir
+    return
+  end
+
   set project_dir (get_project_dir)
 
   if is_venv_active && is_old_venv_active $project_dir
-    deactivate
+    deactivate_venv
   end
 
   set venv_dir (get_venv_dir $project_dir)
@@ -14,14 +18,30 @@ function autopy --on-variable PWD
 
   if is_venv_active
     if is_outside_venv $venv_dir
-      deactivate
+      deactivate_venv
     end
     return
   end
 
   if test -n "$venv_dir"
-    source "$venv_dir/bin/activate.fish"
-    set -gx OLD_PROJECT_DIR $project_dir
+    activate_venv $venv_dir $project_dir
+  end
+end
+
+function is_venv_active
+  set python_bin (command which python)
+  test "$python_bin" = "$VIRTUAL_ENV/bin/python"
+end
+
+function is_child_dir
+  if test -n "$OLD_PROJECT_DIR"
+    switch $PWD
+      case $OLD_PROJECT_DIR\*
+        return 0
+      case \*
+        return 1
+    end
+  else
   end
 end
 
@@ -57,10 +77,6 @@ function is_poetry_project -a dir
   command -q poetry && test -e "$dir/pyproject.toml"
 end
 
-function is_venv_active
-  set python_bin (command which python)
-  test "$python_bin" = "$VIRTUAL_ENV/bin/python"
-end
 
 function is_outside_venv -a dir
   test "$VIRTUAL_ENV" != "$dir"
@@ -68,5 +84,15 @@ end
 
 function is_old_venv_active -a dir
   test "$OLD_PROJECT_DIR" != "$dir"
+end
+
+function activate_venv -a venv_dir project_dir
+  source "$venv_dir/bin/activate.fish"
+  set -gx OLD_PROJECT_DIR $project_dir
+end
+
+function deactivate_venv
+  deactivate
+  set -gx OLD_PROJECT_DIR ""
 end
 
