@@ -29,8 +29,7 @@ function autopy --on-variable PWD
 end
 
 function is_venv_active
-  set python_bin (command which python)
-  test "$python_bin" = "$VIRTUAL_ENV/bin/python"
+  test (command which python) = "$VIRTUAL_ENV/bin/python"
 end
 
 function is_child_dir
