@@ -1,5 +1,5 @@
 
-function autopy --on-variable PWD
+function autopy --on-event fish_prompt
   if is_venv_active && is_child_dir
     return
   end
