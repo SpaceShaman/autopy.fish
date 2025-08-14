@@ -18,6 +18,12 @@ A [Fish Shell](https://fishshell.com/) plugin that automatically activates a Pyt
 fisher install SpaceShaman/autopy.fish
 ```
 
+### With [reff](https://github.com/danielb2/reef)
+
+```fish
+reff install SpaceShaman/autoenv.fish
+```
+
 ### Manually
 
 Copy `autopy.fish` to your `~/.config/fish/conf.d/` directory.
