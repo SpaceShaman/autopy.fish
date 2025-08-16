@@ -18,10 +18,10 @@ A [Fish Shell](https://fishshell.com/) plugin that automatically activates a Pyt
 fisher install SpaceShaman/autopy.fish
 ```
 
-### With [reff](https://github.com/danielb2/reef)
+### With [reef](https://github.com/danielb2/reef)
 
 ```fish
-reff install SpaceShaman/autoenv.fish
+reef install SpaceShaman/autoenv.fish
 ```
 
 ### Manually
