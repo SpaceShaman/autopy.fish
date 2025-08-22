@@ -29,7 +29,9 @@ function autopy --on-event fish_prompt
 end
 
 function is_venv_active
-  test (command which python) = "$VIRTUAL_ENV/bin/python"
+  set -l python_path (type --path python)
+  set -q $python_path
+  and test $python_path = "$VIRTUAL_ENV/bin/python"
 end
 
 function is_child_dir
@@ -76,7 +78,6 @@ function is_poetry_project -a dir
   command -q poetry && test -e "$dir/pyproject.toml"
 end
 
-
 function is_outside_venv -a dir
   test "$VIRTUAL_ENV" != "$dir"
 end
@@ -94,4 +95,3 @@ function deactivate_venv
   deactivate
   set -gx OLD_PROJECT_DIR ""
 end
-
