@@ -45,10 +45,13 @@ function is_child_dir
 end
 
 function get_project_dir
-  if is_git_repo
+  set -l dir (pwd)
+  if is_poetry_project $dir
+    echo $dir
+  else if is_git_repo
     command git rev-parse --show-toplevel
   else
-    pwd
+    echo $dir
   end
 end
 
