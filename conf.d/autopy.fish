@@ -1,7 +1,8 @@
-
 function autopy --on-event fish_prompt
-  if is_venv_active && is_child_dir
-    return
+  if is_venv_active
+    if is_child_dir || not is_inside_autopy_venv
+      return
+    end
   end
 
   set project_dir (get_project_dir)
@@ -79,6 +80,9 @@ function is_poetry_project -a dir
   command -q poetry && test -e "$dir/pyproject.toml"
 end
 
+function is_inside_autopy_venv
+  test -n "$AUTOPY_OLD_PROJECT_DIR" -a "$AUTOPY_OLD_VENV_DIR" = "$VIRTUAL_ENV"
+end
 
 function is_outside_venv -a dir
   test "$VIRTUAL_ENV" != "$dir"
@@ -90,11 +94,12 @@ end
 
 function activate_venv -a venv_dir project_dir
   source "$venv_dir/bin/activate.fish"
+  set -gx AUTOPY_OLD_VENV_DIR $venv_dir
   set -gx AUTOPY_OLD_PROJECT_DIR $project_dir
 end
 
 function deactivate_venv
   deactivate
+  set -gx AUTOPY_OLD_VENV_DIR ""
   set -gx AUTOPY_OLD_PROJECT_DIR ""
 end
-
