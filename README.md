@@ -1,6 +1,8 @@
 # autopy.fish
 
-A [Fish Shell](https://fishshell.com/) plugin that automatically activates a Python virtual environment ([venv](https://docs.python.org/3/library/venv.html), [UV](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/)) when you `cd` into a project directory. If another environment is already active, it will be deactivated.
+A [Fish Shell](https://fishshell.com/) plugin that automatically activates a Python virtual environment ([venv](https://docs.python.org/3/library/venv.html), [UV](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/)) when you `cd` into a project directory. If another environment was previously actived by `autopy.fish`, it will be deactivated.
+
+If a virtual environment is activated by other means (e.g. by explicitly running `source {venv_path}/bin/activate.fish`), `autopy.fish` will do nothing until this environment is deactivated.
 
 ## Features
 
