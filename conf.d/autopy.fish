@@ -35,9 +35,9 @@ function is_venv_active
 end
 
 function is_child_dir
-  if test -n "$OLD_PROJECT_DIR"
+  if test -n "$AUTOPY_OLD_PROJECT_DIR"
     switch $PWD
-      case $OLD_PROJECT_DIR\*
+      case $AUTOPY_OLD_PROJECT_DIR\*
         return 0
       case \*
         return 1
@@ -83,15 +83,15 @@ function is_outside_venv -a dir
 end
 
 function is_old_venv_active -a dir
-  test "$OLD_PROJECT_DIR" != "$dir"
+  test "$AUTOPY_OLD_PROJECT_DIR" != "$dir"
 end
 
 function activate_venv -a venv_dir project_dir
   source "$venv_dir/bin/activate.fish"
-  set -gx OLD_PROJECT_DIR $project_dir
+  set -gx AUTOPY_OLD_PROJECT_DIR $project_dir
 end
 
 function deactivate_venv
   deactivate
-  set -gx OLD_PROJECT_DIR ""
+  set -gx AUTOPY_OLD_PROJECT_DIR ""
 end
