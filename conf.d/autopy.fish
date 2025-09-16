@@ -29,7 +29,7 @@ function autopy --on-event fish_prompt
 end
 
 function is_venv_active
-  test (command which python) = "$VIRTUAL_ENV/bin/python"
+  test (command which python3) = "$VIRTUAL_ENV/bin/python3"
 end
 
 function is_child_dir
@@ -73,7 +73,11 @@ function is_git_repo
 end
 
 function is_poetry_project -a dir
-  command -q poetry && test -e "$dir/pyproject.toml"
+  if test -e "$dir/pyproject.toml"
+    grep -q '^\[tool.poetry\]' "$dir/pyproject.toml"
+  else
+    return 1
+  end
 end
 
 
