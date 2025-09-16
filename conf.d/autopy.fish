@@ -95,7 +95,8 @@ function activate_venv -a venv_dir project_dir
 end
 
 function deactivate_venv
-  deactivate
-  set -gx AUTOPY_OLD_PROJECT_DIR ""
+  functions -q deactivate; and deactivate
+  set -e VIRTUAL_ENV
+  set -e AUTOPY_OLD_PROJECT_DIR
 end
 
