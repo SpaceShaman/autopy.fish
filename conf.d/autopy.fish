@@ -30,7 +30,7 @@ function autopy --on-event fish_prompt
 end
 
 function is_venv_active
-  test (type --path python3) = "$VIRTUAL_ENV/bin/python3"
+  test "$(type --path python3)" = "$VIRTUAL_ENV/bin/python3"
 end
 
 function is_child_dir
