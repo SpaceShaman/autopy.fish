@@ -57,11 +57,13 @@ function get_project_dir
 end
 
 function get_venv_dir -a project_dir
+  set venv_dir ""
   if is_poetry_project $project_dir
-    set venv_dir (poetry env info --path)
+    if type -q poetry
+      set venv_dir (poetry env info --path)
+    end
   else
     set venv_dir_names env .env venv .venv
-    set venv_dir ""
     for name in $venv_dir_names
       if test -e "$project_dir/$name/bin/activate.fish"
         set venv_dir "$project_dir/$name"
