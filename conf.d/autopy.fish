@@ -46,7 +46,7 @@ function is_child_dir
 end
 
 function get_project_dir
-  set -l dir (pwd)
+  set dir (pwd)
   if is_poetry_project $dir
     echo $dir
   else if is_git_repo
@@ -58,9 +58,9 @@ end
 
 function get_venv_dir -a project_dir
   if is_poetry_project $project_dir
-    set venv_dir (command poetry show -v 2> /dev/null | grep 'Using virtualenv:' | cut -d ' ' -f 3)
+    set venv_dir (poetry env info --path)
   else
-    set -l venv_dir_names env .env venv .venv
+    set venv_dir_names env .env venv .venv
     set venv_dir ""
     for name in $venv_dir_names
       if test -e "$project_dir/$name/bin/activate.fish"
