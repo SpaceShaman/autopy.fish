@@ -36,12 +36,11 @@ end
 function is_child_dir
   if test -n "$AUTOPY_OLD_PROJECT_DIR"
     switch $PWD
-      case $AUTOPY_OLD_PROJECT_DIR\*
-        return 0
-      case \*
-        return 1
+    case $AUTOPY_OLD_PROJECT_DIR\*
+      return 0
+    case \*
+      return 1
     end
-  else
   end
 end
 
