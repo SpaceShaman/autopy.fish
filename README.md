@@ -30,13 +30,3 @@ reef install SpaceShaman/autoenv.fish
 
 Copy `autopy.fish` to your `~/.config/fish/conf.d/` directory.
 
-## Usage tip
-
-If you want the virtual environment to be activated automatically every time you start a new shell (even in terminals spawned from within other tools like Vim), add the following line to your `config.fish`:
-
-```fish
-autopy
-```
-
-This ensures the environment is activated right after shell startup, not just when changing directories.
-
