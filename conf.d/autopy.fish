@@ -1,4 +1,31 @@
 function _autopy --on-event fish_prompt
+  if not set -q autopy_async; or test "$autopy_async" = "false"
+    _autopy_exec (_autopy_cmd)
+  end
+end
+
+function _autopy_async --on-signal SIGUSR1
+  if set -q autopy_async; and test "$autopy_async" = "true"
+    set tmpfile $__async_prompt_tmpdir'/'$fish_pid'_'_autopy_cmd
+    if test -e $tmpfile
+      _autopy_exec (cat $tmpfile)
+    end
+  end
+end
+
+function _autopy_exec -a command
+  switch $command
+  case "activate*"
+    set parts (string split ' ' $command)
+    set venv_dir (string trim --chars="'" $parts[2])
+    set project_dir (string trim --chars="'" $parts[3])
+    _autopy_activate_venv $venv_dir $project_dir
+  case "deactivate"
+    _autopy_deactivate_venv
+  end
+end
+
+function _autopy_cmd
   if _autopy_is_venv_active
     if _autopy_is_child_dir || not _autopy_is_inside_autopy_venv
       return
@@ -8,7 +35,8 @@ function _autopy --on-event fish_prompt
   set project_dir (_autopy_get_project_dir)
 
   if _autopy_is_venv_active && _autopy_is_old_venv_active $project_dir
-    _autopy_deactivate_venv
+    echo "deactivate"
+    return
   end
 
   set venv_dir (_autopy_get_venv_dir $project_dir)
@@ -19,13 +47,13 @@ function _autopy --on-event fish_prompt
 
   if _autopy_is_venv_active
     if _autopy_is_outside_venv $venv_dir
-      _autopy_deactivate_venv
+      echo "deactivate"
     end
     return
   end
 
   if test -n "$venv_dir"
-    _autopy_activate_venv $venv_dir $project_dir
+    echo "activate '$venv_dir' '$project_dir'"
   end
 end
 
