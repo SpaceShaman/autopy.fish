@@ -1,39 +1,39 @@
-function autopy --on-event fish_prompt
-  if is_venv_active
-    if is_child_dir || not is_inside_autopy_venv
+function _autopy --on-event fish_prompt
+  if _autopy_is_venv_active
+    if _autopy_is_child_dir || not _autopy_is_inside_autopy_venv
       return
     end
   end
 
-  set project_dir (get_project_dir)
+  set project_dir (_autopy_get_project_dir)
 
-  if is_venv_active && is_old_venv_active $project_dir
-    deactivate_venv
+  if _autopy_is_venv_active && _autopy_is_old_venv_active $project_dir
+    _autopy_deactivate_venv
   end
 
-  set venv_dir (get_venv_dir $project_dir)
+  set venv_dir (_autopy_get_venv_dir $project_dir)
 
   if test -z "$venv_dir"
     return
   end
 
-  if is_venv_active
-    if is_outside_venv $venv_dir
-      deactivate_venv
+  if _autopy_is_venv_active
+    if _autopy_is_outside_venv $venv_dir
+      _autopy_deactivate_venv
     end
     return
   end
 
   if test -n "$venv_dir"
-    activate_venv $venv_dir $project_dir
+    _autopy_activate_venv $venv_dir $project_dir
   end
 end
 
-function is_venv_active
+function _autopy_is_venv_active
   test "$(type --path python3)" = "$VIRTUAL_ENV/bin/python3"
 end
 
-function is_child_dir
+function _autopy_is_child_dir
   if test -n "$AUTOPY_OLD_PROJECT_DIR"
     switch $PWD
     case $AUTOPY_OLD_PROJECT_DIR\*
@@ -44,19 +44,19 @@ function is_child_dir
   end
 end
 
-function get_project_dir
+function _autopy_get_project_dir
   set dir (pwd)
-  if is_poetry_project $dir
+  if _autopy_is_poetry_project $dir
     echo $dir
-  else if is_git_repo
+  else if _autopy_is_git_repo
     command git rev-parse --show-toplevel
   else
     echo $dir
   end
 end
 
-function get_venv_dir -a project_dir
-  if is_poetry_project $project_dir
+function _autopy_get_venv_dir -a project_dir
+  if _autopy_is_poetry_project $project_dir
     if type -q poetry
       set venv_dir (poetry env info --path 2>/dev/null)
     end
@@ -73,11 +73,11 @@ function get_venv_dir -a project_dir
   echo $venv_dir
 end
 
-function is_git_repo
+function _autopy_is_git_repo
   command git rev-parse --show-toplevel &>/dev/null
 end
 
-function is_poetry_project -a dir
+function _autopy_is_poetry_project -a dir
   if test -e "$dir/pyproject.toml"
     grep -q '^\[tool.poetry\]' "$dir/pyproject.toml"
   else
@@ -85,25 +85,25 @@ function is_poetry_project -a dir
   end
 end
 
-function is_inside_autopy_venv
+function _autopy_is_inside_autopy_venv
   test -n "$AUTOPY_OLD_PROJECT_DIR" -a "$AUTOPY_OLD_VENV_DIR" = "$VIRTUAL_ENV"
 end
 
-function is_outside_venv -a dir
+function _autopy_is_outside_venv -a dir
   test "$VIRTUAL_ENV" != "$dir"
 end
 
-function is_old_venv_active -a dir
+function _autopy_is_old_venv_active -a dir
   test "$AUTOPY_OLD_PROJECT_DIR" != "$dir"
 end
 
-function activate_venv -a venv_dir project_dir
+function _autopy_activate_venv -a venv_dir project_dir
   source "$venv_dir/bin/activate.fish"
   set -gx AUTOPY_OLD_VENV_DIR $venv_dir
   set -gx AUTOPY_OLD_PROJECT_DIR $project_dir
 end
 
-function deactivate_venv
+function _autopy_deactivate_venv
   functions -q deactivate; and deactivate
   set -e AUTOPY_OLD_VENV_DIR
   set -e AUTOPY_OLD_PROJECT_DIR
