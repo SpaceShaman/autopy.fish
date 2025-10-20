@@ -29,5 +29,3 @@ reef install SpaceShaman/autoenv.fish
 ### Manually
 
 Copy `autopy.fish` to your `~/.config/fish/conf.d/` directory.
-
-test
