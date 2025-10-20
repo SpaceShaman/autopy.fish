@@ -1,4 +1,9 @@
-function _autopy --on-event fish_prompt
+function autopy
+  if _autopy_is_old_venv_deleted
+    echo "deactivate"
+    return
+  end
+
   if _autopy_is_venv_active
     if _autopy_is_child_dir || not _autopy_is_inside_autopy_venv
       return
@@ -8,7 +13,8 @@ function _autopy --on-event fish_prompt
   set project_dir (_autopy_get_project_dir)
 
   if _autopy_is_venv_active && _autopy_is_old_venv_active $project_dir
-    _autopy_deactivate_venv
+    echo "deactivate"
+    return
   end
 
   set venv_dir (_autopy_get_venv_dir $project_dir)
@@ -19,14 +25,44 @@ function _autopy --on-event fish_prompt
 
   if _autopy_is_venv_active
     if _autopy_is_outside_venv $venv_dir
-      _autopy_deactivate_venv
+      echo "deactivate"
     end
     return
   end
 
   if test -n "$venv_dir"
-    _autopy_activate_venv $venv_dir $project_dir
+    echo "activate '$venv_dir' '$project_dir'"
   end
+end
+
+function _autopy_sync_clean_file --on-event fish_prompt
+  set tmpfile (_autopy_async_file)
+  if test -e $tmpfile
+    rm $tmpfile
+  end
+end
+
+function _autopy_async --on-signal SIGUSR1
+  set tmpfile (_autopy_async_file)
+  if test -e $tmpfile
+    _autopy_exec (cat $tmpfile)
+  end
+end
+
+function _autopy_exec -a command
+  switch $command
+  case "activate*"
+    set parts (string split ' ' $command)
+    set venv_dir (string trim --chars="'" $parts[2])
+    set project_dir (string trim --chars="'" $parts[3])
+    _autopy_activate_venv $venv_dir $project_dir
+  case "deactivate"
+    _autopy_deactivate_venv
+  end
+end
+
+function _autopy_async_file
+  echo $__async_prompt_tmpdir'/'$fish_pid'_'autopy
 end
 
 function _autopy_is_venv_active
@@ -95,6 +131,10 @@ end
 
 function _autopy_is_old_venv_active -a dir
   test "$AUTOPY_OLD_PROJECT_DIR" != "$dir"
+end
+
+function _autopy_is_old_venv_deleted
+  test -n "$AUTOPY_OLD_PROJECT_DIR" -a ! -e "$AUTOPY_OLD_VENV_DIR/bin/activate.fish"
 end
 
 function _autopy_activate_venv -a venv_dir project_dir
