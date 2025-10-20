@@ -1,4 +1,8 @@
 function _autopy --on-event fish_prompt
+  if _autopy_is_old_venv_deleted
+    _autopy_deactivate_venv
+  end
+
   if _autopy_is_venv_active
     if _autopy_is_child_dir || not _autopy_is_inside_autopy_venv
       return
@@ -95,6 +99,10 @@ end
 
 function _autopy_is_old_venv_active -a dir
   test "$AUTOPY_OLD_PROJECT_DIR" != "$dir"
+end
+
+function _autopy_is_old_venv_deleted
+  test -n "$AUTOPY_OLD_PROJECT_DIR" -a ! -e "$AUTOPY_OLD_VENV_DIR/bin/activate.fish"
 end
 
 function _autopy_activate_venv -a venv_dir project_dir
