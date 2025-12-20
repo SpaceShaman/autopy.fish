@@ -23,7 +23,7 @@ fisher install SpaceShaman/autopy.fish
 ### With [reef](https://github.com/danielb2/reef)
 
 ```fish
-reef install SpaceShaman/autoenv.fish
+reef install SpaceShaman/autopy.fish
 ```
 
 ### Manually
