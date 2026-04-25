@@ -50,7 +50,9 @@ end
 
 function _autopy_get_project_dir
   set dir (pwd)
-  if _autopy_is_poetry_project $dir
+  if _autopy_is_venv_in_dir $dir
+    echo $dir
+  else if _autopy_is_poetry_project $dir
     echo $dir
   else if _autopy_is_git_repo
     command git rev-parse --show-toplevel
@@ -66,8 +68,7 @@ function _autopy_get_venv_dir -a project_dir
     end
   else
     set venv_dir ""
-    set venv_dir_names env .env venv .venv
-    for name in $venv_dir_names
+    for name in env .env venv .venv
       if test -e "$project_dir/$name/bin/activate.fish"
         set venv_dir "$project_dir/$name"
         break
@@ -115,4 +116,13 @@ function _autopy_deactivate_venv
   functions -q deactivate; and deactivate
   set -e AUTOPY_OLD_VENV_DIR
   set -e AUTOPY_OLD_PROJECT_DIR
+end
+
+function _autopy_is_venv_in_dir -a dir
+  for name in env .env venv .venv
+    if test -e "$dir/$name/bin/activate.fish"
+      return 0
+    end
+  end
+  return 1
 end
